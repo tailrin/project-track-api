@@ -8,6 +8,7 @@
     "scripti": "npm i",
     "commit": "git commit -m",
     "precommit": "git add .",
+    "postcommit": "git push",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "predeploy": "npm audit",
