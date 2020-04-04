@@ -104,7 +104,7 @@ ProjectsRouter.route("/:id")
         res
           .status(201)
           .location(`/`)
-          .json(serializeProject(newProject));
+          .end();
       })
       .catch(next);
   })
