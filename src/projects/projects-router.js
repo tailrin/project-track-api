@@ -142,7 +142,13 @@ ProjectsRouter.route("/:id")
       }
     }
     ProjectsService.updateProject(req.app.get("db"), id, updatedProject)
-      .then(newProject => {
+      .then(project => {
+        if (!project) {
+          logger.error(`Project with id ${id} not found.`);
+          return res.status(404).json({
+            error: { message: `Project Not Found` }
+          });
+        }
         res
           .status(201)
           .location(`/`)
