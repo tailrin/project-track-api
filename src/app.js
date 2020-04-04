@@ -3,6 +3,9 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const usersRouter = require('./users/users-router')
+const authRouter = require('./auth/auth-router')
+const companyRouter = require('./company/company-routers')
 const NODE_ENV = process.env.NODE_ENV
 
 const app = express()
@@ -14,6 +17,9 @@ const morganOption = (NODE_ENV === 'production')
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
+app.use('/api/auth', authRouter)
+app.use('/api/users', usersRouter)
+app.use('/company', companyRouter)
 
 app.use(function errorHandler(error, req, res, next){
 	let response
