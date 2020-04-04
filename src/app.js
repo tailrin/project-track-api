@@ -7,6 +7,7 @@ const usersRouter = require("./users/users-router");
 const authRouter = require("./auth/auth-router");
 const companyRouter = require("./company/company-routers");
 const ProjectsRouter = require("./projects/projects-router");
+const TasksRouter = require("./tasks/tasks-router");
 const NODE_ENV = process.env.NODE_ENV;
 
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/company", companyRouter);
 app.use("/api/projects", ProjectsRouter);
+app.use("/api/tasks", TasksRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
