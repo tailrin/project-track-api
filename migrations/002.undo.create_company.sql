@@ -1,0 +1,4 @@
+ALTER TABLE users
+  DROP COLUMN IF EXISTS companyid;
+
+DROP TABLE IF EXISTS company;
