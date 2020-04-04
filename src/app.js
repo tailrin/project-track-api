@@ -19,7 +19,7 @@ app.use(helmet())
 app.use(cors())
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
-app.use('/company', companyRouter)
+app.use('/api/company', companyRouter)
 
 app.use(function errorHandler(error, req, res, next){
 	let response
