@@ -17,15 +17,33 @@ const serializeTask = task => ({
   status: task.status
 });
 
+// Get all Tasks for the company
+TasksRouter.route("/c/:companyid")
+  .all(requireAuth)
+  .get((req, res, next) => {
+    const { companyid } = req.params;
+    TasksService.getAllCompanyTasks(req.app.get("db"), companyid)
+      .then(tasks => {
+        if (!tasks) {
+          logger.error(`Task with Company id ${companyid} not found.`);
+          return res.status(404).json({
+            error: { message: `task not found` }
+          });
+        }
+        res.json(tasks.map(serializeTask));
+      })
+      .catch(next);
+  });
+
 // Get all Tasks for the project
 TasksRouter.route("/p/:projectid")
   .all(requireAuth)
   .get((req, res, next) => {
-    const { projectId } = req.params;
-    TasksService.getAllProjectTasks(req.app.get("db"), projectId)
+    const { projectid } = req.params;
+    TasksService.getAllProjectTasks(req.app.get("db"), projectid)
       .then(tasks => {
         if (!tasks) {
-          logger.error(`Task with Project id ${projectId} not found.`);
+          logger.error(`Task with Project id ${projectid} not found.`);
           return res.status(404).json({
             error: { message: `task not found` }
           });

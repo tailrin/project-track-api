@@ -1,4 +1,24 @@
 const TasksService = {
+  getAllCompanyTasks(db, id) {
+    return db
+      .from("tasks AS t")
+      .select(
+        "t.id",
+        "t.projectid",
+        "t.task_name",
+        "t.assignedto",
+        "t.description",
+        "t.priority",
+        "t.status",
+        "t.datecreated",
+        "t.datemodified",
+        ...projectFields,
+        ...companyFields
+      )
+      .leftJoin("projects AS p", "t.projectid", "p.id")
+      .innerJoin("company AS c", "p.companyid", "c.id")
+      .where("c.id", id);
+  },
   getAllProjectTasks(db, id) {
     return db
       .from("tasks AS t")
@@ -46,14 +66,18 @@ const TasksService = {
 };
 
 const projectFields = [
-  "p.id AS project:id",
-  "p.project_name AS project:project_name",
-  "p.description AS project:descripotion",
-  "p.dateadded AS project:dateadded",
-  "p.duedate AS project:duedate",
-  "p.priority AS project:priority",
-  "p.status AS project:status",
-  "p.companyid AS project:companyid"
+  "p.id AS projects:id",
+  "p.project_name AS projects:project_name",
+  "p.description AS projects:description",
+  "p.dateadded AS projects:dateadded",
+  "p.duedate AS projects:duedate",
+  "p.priority AS projects:priority",
+  "p.status AS projects:status",
+  "p.companyid AS projects:companyid"
+];
+const companyFields = [
+  "c.id AS company:id",
+  "c.company_name AS company:company_name"
 ];
 
 const userFields = [

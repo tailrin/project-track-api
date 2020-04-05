@@ -19,14 +19,14 @@ const serializeProject = project => ({
 });
 
 // Get all Projects for the company
-ProjectsRouter.route("/c/:companyId")
+ProjectsRouter.route("/c/:companyid")
   .all(requireAuth)
   .get((req, res, next) => {
-    const { companyId } = req.params;
-    ProjectsService.getAllCompanyProjects(req.app.get("db"), companyId)
+    const { companyid } = req.params;
+    ProjectsService.getAllCompanyProjects(req.app.get("db"), companyid)
       .then(projects => {
         if (!projects) {
-          logger.error(`Project with Company id ${companyId} not found.`);
+          logger.error(`Project with Company id ${companyid} not found.`);
           return res.status(404).json({
             error: { message: `Project not found` }
           });
@@ -38,6 +38,7 @@ ProjectsRouter.route("/c/:companyId")
   //add a project to a company
   .post(bodyParser, (req, res, next) => {
     const { companyid } = req.params;
+    console.log(companyid);
     const {
       project_name,
       description,
