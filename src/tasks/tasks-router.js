@@ -39,11 +39,11 @@ TasksRouter.route("/c/:companyid")
 TasksRouter.route("/p/:projectid")
   .all(requireAuth)
   .get((req, res, next) => {
-    const { projectId } = req.params;
-    TasksService.getAllProjectTasks(req.app.get("db"), projectId)
+    const { projectid } = req.params;
+    TasksService.getAllProjectTasks(req.app.get("db"), projectid)
       .then(tasks => {
         if (!tasks) {
-          logger.error(`Task with Project id ${projectId} not found.`);
+          logger.error(`Task with Project id ${projectid} not found.`);
           return res.status(404).json({
             error: { message: `task not found` }
           });
