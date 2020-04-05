@@ -43,9 +43,10 @@ ProjectsRouter.route("/c/:companyId")
       description,
       dateadded,
       duedate,
-      priority,
-      status
+      priority
     } = req.body;
+
+    const status = "New";
     const newProject = {
       project_name,
       description,
@@ -62,6 +63,20 @@ ProjectsRouter.route("/c/:companyId")
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         });
+    if (priority != null) {
+      if (
+        priority !== "High" &&
+        priority !== "Medium" &&
+        priority !== "Low" &&
+        priority !== "Urgent"
+      ) {
+        logger.error(`Invalid priority '${priority}' supplied`);
+
+        return res
+          .status(400)
+          .send(`'Priority' must be: High, Medium, Low, or Urgent`);
+      }
+    }
 
     ProjectsService.insertProject(req.app.get("db"), newProject)
       .then(newProject => {
@@ -99,8 +114,41 @@ ProjectsRouter.route("/:id")
       priority,
       status
     };
+    if (priority != null) {
+      if (
+        priority !== "High" &&
+        priority !== "Medium" &&
+        priority !== "Low" &&
+        priority !== "Urgent"
+      ) {
+        logger.error(`Invalid priority '${priority}' supplied`);
+
+        return res
+          .status(400)
+          .send(`'Priority' must be: High, Medium, Low, or Urgent`);
+      }
+    }
+    if (status != null) {
+      if (
+        status !== "New" &&
+        status !== "In Progress" &&
+        status !== "Closed" &&
+        status !== "On Hold"
+      ) {
+        logger.error(`Invalid status '${status}' supplied`);
+        return res
+          .status(400)
+          .send(`'Status' must be: New, In Progress, Closed, or On Hold`);
+      }
+    }
     ProjectsService.updateProject(req.app.get("db"), id, updatedProject)
-      .then(newProject => {
+      .then(project => {
+        if (!project) {
+          logger.error(`Project with id ${id} not found.`);
+          return res.status(404).json({
+            error: { message: `Project Not Found` }
+          });
+        }
         res
           .status(201)
           .location(`/`)
