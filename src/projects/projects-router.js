@@ -1,13 +1,13 @@
 const express = require("express");
 const logger = require("../middleware/logger.js");
 const xss = require("xss");
-const ProjectsService = require("./Projects-service");
+const ProjectsService = require("./projects-service");
 
 const ProjectsRouter = express.Router();
 const bodyParser = express.json();
 const { requireAuth } = require("../middleware/jwt-auth");
 
-const serializeProject = project => ({
+const serializeProject = (project) => ({
   id: project.id,
   project_name: xss(project.project_name),
   description: xss(project.description),
@@ -15,7 +15,7 @@ const serializeProject = project => ({
   duedate: project.duedate,
   priority: project.priority,
   status: project.status,
-  companyid: project.companyid
+  companyid: project.companyid,
 });
 
 // Get all Projects for the company
@@ -24,11 +24,11 @@ ProjectsRouter.route("/c/:companyid")
   .get((req, res, next) => {
     const { companyid } = req.params;
     ProjectsService.getAllCompanyProjects(req.app.get("db"), companyid)
-      .then(projects => {
+      .then((projects) => {
         if (!projects) {
           logger.error(`Project with Company id ${companyid} not found.`);
           return res.status(404).json({
-            error: { message: `Project not found` }
+            error: { message: `Project not found` },
           });
         }
         res.json(projects.map(serializeProject));
@@ -44,7 +44,7 @@ ProjectsRouter.route("/c/:companyid")
       description,
       dateadded,
       duedate,
-      priority
+      priority,
     } = req.body;
 
     const status = "New";
@@ -55,14 +55,14 @@ ProjectsRouter.route("/c/:companyid")
       duedate,
       priority,
       status,
-      companyid
+      companyid,
     };
 
     const required = { project_name, dateadded, priority, status };
     for (const [key, value] of Object.entries(required))
       if (value == null)
         return res.status(400).json({
-          error: `Missing '${key}' in request body`
+          error: `Missing '${key}' in request body`,
         });
     if (priority != null) {
       if (
@@ -80,11 +80,8 @@ ProjectsRouter.route("/c/:companyid")
     }
 
     ProjectsService.insertProject(req.app.get("db"), newProject)
-      .then(newProject => {
-        res
-          .status(201)
-          .location(`/`)
-          .json(serializeProject(newProject));
+      .then((newProject) => {
+        res.status(201).location(`/`).json(serializeProject(newProject));
       })
       .catch(next);
   });
@@ -94,11 +91,11 @@ ProjectsRouter.route("/:id")
   .get((req, res, next) => {
     const { id } = req.params;
     ProjectsService.getById(req.app.get("db"), id)
-      .then(project => {
+      .then((project) => {
         if (!project) {
           logger.error(`Project with id ${id} not found.`);
           return res.status(404).json({
-            error: { message: `Project Not Found` }
+            error: { message: `Project Not Found` },
           });
         }
         res.json(serializeProject(project));
@@ -113,7 +110,7 @@ ProjectsRouter.route("/:id")
       description,
       duedate,
       priority,
-      status
+      status,
     };
     if (priority != null) {
       if (
@@ -143,17 +140,14 @@ ProjectsRouter.route("/:id")
       }
     }
     ProjectsService.updateProject(req.app.get("db"), id, updatedProject)
-      .then(project => {
+      .then((project) => {
         if (!project) {
           logger.error(`Project with id ${id} not found.`);
           return res.status(404).json({
-            error: { message: `Project Not Found` }
+            error: { message: `Project Not Found` },
           });
         }
-        res
-          .status(201)
-          .location(`/`)
-          .end();
+        res.status(201).location(`/`).end();
       })
       .catch(next);
   })
@@ -161,10 +155,10 @@ ProjectsRouter.route("/:id")
     const { id } = req.params;
 
     ProjectsService.deleteProject(req.app.get("db"), id)
-      .then(numRowsAffected => {
+      .then((numRowsAffected) => {
         res.status(204).end();
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err).next();
       });
   });
