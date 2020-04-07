@@ -19,14 +19,14 @@ const serializeProject = project => ({
 });
 
 // Get all Projects for the company
-ProjectsRouter.route("/c/:companyId")
+ProjectsRouter.route("/c/:companyid")
   .all(requireAuth)
   .get((req, res, next) => {
-    const { companyId } = req.params;
-    ProjectsService.getAllCompanyProjects(req.app.get("db"), companyId)
+    const { companyid } = req.params;
+    ProjectsService.getAllCompanyProjects(req.app.get("db"), companyid)
       .then(projects => {
         if (!projects) {
-          logger.error(`Project with Company id ${companyId} not found.`);
+          logger.error(`Project with Company id ${companyid} not found.`);
           return res.status(404).json({
             error: { message: `Project not found` }
           });
@@ -38,14 +38,16 @@ ProjectsRouter.route("/c/:companyId")
   //add a project to a company
   .post(bodyParser, (req, res, next) => {
     const { companyid } = req.params;
+    console.log(companyid);
     const {
       project_name,
       description,
       dateadded,
       duedate,
-      priority,
-      status
+      priority
     } = req.body;
+
+    const status = "New";
     const newProject = {
       project_name,
       description,
@@ -62,6 +64,20 @@ ProjectsRouter.route("/c/:companyId")
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         });
+    if (priority != null) {
+      if (
+        priority !== "High" &&
+        priority !== "Medium" &&
+        priority !== "Low" &&
+        priority !== "Urgent"
+      ) {
+        logger.error(`Invalid priority '${priority}' supplied`);
+
+        return res
+          .status(400)
+          .send(`'Priority' must be: High, Medium, Low, or Urgent`);
+      }
+    }
 
     ProjectsService.insertProject(req.app.get("db"), newProject)
       .then(newProject => {
@@ -99,8 +115,41 @@ ProjectsRouter.route("/:id")
       priority,
       status
     };
+    if (priority != null) {
+      if (
+        priority !== "High" &&
+        priority !== "Medium" &&
+        priority !== "Low" &&
+        priority !== "Urgent"
+      ) {
+        logger.error(`Invalid priority '${priority}' supplied`);
+
+        return res
+          .status(400)
+          .send(`'Priority' must be: High, Medium, Low, or Urgent`);
+      }
+    }
+    if (status != null) {
+      if (
+        status !== "New" &&
+        status !== "In Progress" &&
+        status !== "Closed" &&
+        status !== "On Hold"
+      ) {
+        logger.error(`Invalid status '${status}' supplied`);
+        return res
+          .status(400)
+          .send(`'Status' must be: New, In Progress, Closed, or On Hold`);
+      }
+    }
     ProjectsService.updateProject(req.app.get("db"), id, updatedProject)
-      .then(newProject => {
+      .then(project => {
+        if (!project) {
+          logger.error(`Project with id ${id} not found.`);
+          return res.status(404).json({
+            error: { message: `Project Not Found` }
+          });
+        }
         res
           .status(201)
           .location(`/`)
