@@ -7,14 +7,16 @@ const TasksRouter = express.Router();
 const bodyParser = express.json();
 const { requireAuth } = require("../middleware/jwt-auth");
 
-const serializeTask = task => ({
+const serializeTask = (task) => ({
   id: task.id,
   projectid: task.projectid,
   task_name: xss(task.task_name),
   assignedto: task.assignedto,
   description: xss(task.description),
+  datemodified: task.datemodified,
+  datecreated: task.datecreated,
   priority: task.priority,
-  status: task.status
+  status: task.status,
 });
 
 // Get all Tasks for the company
@@ -23,13 +25,14 @@ TasksRouter.route("/c/:companyid")
   .get((req, res, next) => {
     const { companyid } = req.params;
     TasksService.getAllCompanyTasks(req.app.get("db"), companyid)
-      .then(tasks => {
+      .then((tasks) => {
         if (!tasks) {
           logger.error(`Task with Company id ${companyid} not found.`);
           return res.status(404).json({
-            error: { message: `task not found` }
+            error: { message: `task not found` },
           });
         }
+
         res.json(tasks.map(serializeTask));
       })
       .catch(next);
@@ -41,11 +44,11 @@ TasksRouter.route("/p/:projectid")
   .get((req, res, next) => {
     const { projectid } = req.params;
     TasksService.getAllProjectTasks(req.app.get("db"), projectid)
-      .then(tasks => {
+      .then((tasks) => {
         if (!tasks) {
           logger.error(`Task with Project id ${projectid} not found.`);
           return res.status(404).json({
-            error: { message: `task not found` }
+            error: { message: `task not found` },
           });
         }
         res.json(tasks.map(serializeTask));
@@ -64,14 +67,14 @@ TasksRouter.route("/p/:projectid")
       description,
       priority,
       status,
-      projectid
+      projectid,
     };
 
     const required = { task_name, priority };
     for (const [key, value] of Object.entries(required))
       if (value == null)
         return res.status(400).json({
-          error: `Missing '${key}' in request body`
+          error: `Missing '${key}' in request body`,
         });
 
     if (
@@ -87,11 +90,8 @@ TasksRouter.route("/p/:projectid")
         .send(`'Priority' must be: High, Medium, Low, or Urgent`);
     }
     TasksService.insertTask(req.app.get("db"), newtask)
-      .then(newtask => {
-        res
-          .status(201)
-          .location(`/`)
-          .json(serializeTask(newtask));
+      .then((newtask) => {
+        res.status(201).location(`/`).json(serializeTask(newtask));
       })
       .catch(next);
   });
@@ -101,11 +101,11 @@ TasksRouter.route("/:id")
   .get((req, res, next) => {
     const { id } = req.params;
     TasksService.getById(req.app.get("db"), id)
-      .then(task => {
+      .then((task) => {
         if (!task) {
           logger.error(`task with id ${id} not found.`);
           return res.status(404).json({
-            error: { message: `task Not Found` }
+            error: { message: `task Not Found` },
           });
         }
         res.json(serializeTask(task));
@@ -123,7 +123,7 @@ TasksRouter.route("/:id")
       description,
       datemodified,
       priority,
-      status
+      status,
     };
     if (priority != null) {
       if (
@@ -154,17 +154,14 @@ TasksRouter.route("/:id")
       }
     }
     TasksService.updateTask(req.app.get("db"), id, updatedtask)
-      .then(task => {
+      .then((task) => {
         if (!task) {
           logger.error(`task with id ${id} not found.`);
           return res.status(404).json({
-            error: { message: `task Not Found` }
+            error: { message: `task Not Found` },
           });
         }
-        res
-          .status(201)
-          .location(`/`)
-          .end();
+        res.status(201).location(`/`).end();
       })
       .catch(next);
   })
@@ -172,10 +169,10 @@ TasksRouter.route("/:id")
     const { id } = req.params;
 
     TasksService.deleteTask(req.app.get("db"), id)
-      .then(numRowsAffected => {
+      .then((numRowsAffected) => {
         res.status(204).end();
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err).next();
       });
   });
