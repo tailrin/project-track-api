@@ -60,10 +60,11 @@ ProjectsRouter.route("/c/:companyid")
 
     const required = { project_name, dateadded, priority, status };
     for (const [key, value] of Object.entries(required))
-      if (value == null)
+      if (value == null || value === "")
         return res.status(400).json({
           error: `Missing '${key}' in request body`,
         });
+
     if (priority != null) {
       if (
         priority !== "High" &&
