@@ -4,11 +4,11 @@ module.exports = {
   NODE_ENV: process.env.NODE_ENV || "development",
   DATABASE_URL:
     process.env.DATABASE_URL ||
-    "postgresql://lzylstra@localhost/project_tracker",
+    "postgresql://dunder_mifflin@localhost/project_tracker",
   TEST_DATABASE_URL:
     process.env.TEST_DATABASE_URL ||
     "postgresql://dunder_mifflin@localhost/blogful-test",
   API_BASE_URL:
     process.env.REACT_APP_API_BASE_URL || "http://localhost:8000/api",
-  JWT_SECRET: process.env.JWT_SECRET || "change-this-secret"
+  JWT_SECRET: process.env.JWT_SECRET || "change-this-secret",
 };
