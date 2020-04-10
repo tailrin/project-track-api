@@ -15,6 +15,7 @@ const serializeTask = (task) => ({
   description: xss(task.description),
   datemodified: task.datemodified,
   datecreated: task.datecreated,
+  dateclosed: task.dateclosed,
   priority: task.priority,
   status: task.status,
 });
@@ -117,11 +118,18 @@ TasksRouter.route("/:id")
     const { task_name, assignedto, description, priority, status } = req.body;
 
     let datemodified = new Date();
+    let dateclosed = null;
+
+    if (status === "Closed") {
+      dateclosed = new Date();
+    }
+
     const updatedtask = {
       task_name,
       assignedto,
       description,
       datemodified,
+      dateclosed,
       priority,
       status,
     };

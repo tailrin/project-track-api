@@ -32,6 +32,7 @@ const TasksService = {
         "t.status",
         "t.datecreated",
         "t.datemodified",
+        "t.dateclosed",
         ...projectFields
       )
       .leftJoin("projects AS p", "t.projectid", "p.id")
@@ -66,6 +67,7 @@ const projectFields = [
   "p.priority AS projects:priority",
   "p.status AS projects:status",
   "p.companyid AS projects:companyid",
+  "p.dateclosed AS projects:dateclosed",
 ];
 const companyFields = [
   "c.id AS company:id",
