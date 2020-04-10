@@ -115,12 +115,19 @@ TasksRouter.route("/:id")
   })
   .patch(bodyParser, (req, res, next) => {
     const { id } = req.params;
-    const { task_name, assignedto, description, priority, status } = req.body;
+    let {
+      task_name,
+      assignedto,
+      description,
+      priority,
+      status,
+      dateclosed,
+    } = req.body;
 
     let datemodified = new Date();
-    let dateclosed = null;
 
-    if (status === "Closed") {
+    //If the status has been set to closed and the user hasn't chosen a date update it to today
+    if (status === "Closed" && dateclosed === undefined) {
       dateclosed = new Date();
     }
 

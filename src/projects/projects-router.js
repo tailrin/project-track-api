@@ -107,10 +107,17 @@ ProjectsRouter.route("/:id")
   })
   .patch(bodyParser, (req, res, next) => {
     const { id } = req.params;
-    const { project_name, description, duedate, priority, status } = req.body;
-    let dateclosed = null;
+    let {
+      project_name,
+      description,
+      duedate,
+      priority,
+      status,
+      dateclosed,
+    } = req.body;
 
-    if (status === "Closed") {
+    //If the status has been set to closed and the user hasn't chosen a date update it to today
+    if (status === "Closed" && dateclosed === undefined) {
       dateclosed = new Date();
     }
 
