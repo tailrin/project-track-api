@@ -13,6 +13,7 @@ const serializeProject = (project) => ({
   description: xss(project.description),
   dateadded: project.dateadded,
   duedate: project.duedate,
+  dateclosed: project.dateclosed,
   priority: project.priority,
   status: project.status,
   companyid: project.companyid,
@@ -48,6 +49,7 @@ ProjectsRouter.route("/c/:companyid")
     } = req.body;
 
     const status = "New";
+
     const newProject = {
       project_name,
       description,
@@ -105,14 +107,29 @@ ProjectsRouter.route("/:id")
   })
   .patch(bodyParser, (req, res, next) => {
     const { id } = req.params;
-    const { project_name, description, duedate, priority, status } = req.body;
-    const updatedProject = {
+    let {
       project_name,
       description,
       duedate,
       priority,
       status,
+      dateclosed,
+    } = req.body;
+
+    //If the status has been set to closed and the user hasn't chosen a date update it to today
+    if (status === "Closed" && dateclosed === undefined) {
+      dateclosed = new Date();
+    }
+
+    const updatedProject = {
+      project_name,
+      description,
+      duedate,
+      dateclosed,
+      priority,
+      status,
     };
+
     if (priority != null) {
       if (
         priority !== "High" &&

@@ -7,5 +7,6 @@ CREATE TABLE tasks (
      priority priority_type NOT NULL,
      status status_type NOT NULL,
      datecreated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-     datemodified TIMESTAMP
+     datemodified TIMESTAMP,
+     dateclosed TIMESTAMP WITH TIME ZONE
 );

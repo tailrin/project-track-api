@@ -7,6 +7,7 @@ CREATE TABLE projects (
   description TEXT,
   dateadded TIMESTAMP NOT NULL,
   duedate TIMESTAMP,
+  dateclosed TIMESTAMP,
   priority priority_type NOT NULL,
   status status_type NOT NULL,
   companyid INTEGER REFERENCES company(id) ON DELETE CASCADE
