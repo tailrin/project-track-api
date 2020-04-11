@@ -84,8 +84,8 @@ TasksRouter.route("/p/:projectid")
       priority !== "Low" &&
       priority !== "Urgent"
     ) {
-      // logger.error(`Invalid priority '${priority}' supplied`);
-      console.log("invalid priority");
+      logger.error(`Invalid priority '${priority}' supplied`);
+
       return res
         .status(400)
         .send(`'Priority' must be: High, Medium, Low, or Urgent`);
@@ -188,7 +188,7 @@ TasksRouter.route("/:id")
         res.status(204).end();
       })
       .catch((err) => {
-        console.log(err).next();
+        console.err(err).next();
       });
   });
 
