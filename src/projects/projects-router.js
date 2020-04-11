@@ -39,7 +39,7 @@ ProjectsRouter.route("/c/:companyid")
   //add a project to a company
   .post(bodyParser, (req, res, next) => {
     const { companyid } = req.params;
-    console.log(companyid);
+
     const {
       project_name,
       description,
@@ -177,7 +177,7 @@ ProjectsRouter.route("/:id")
         res.status(204).end();
       })
       .catch((err) => {
-        console.log(err).next();
+        console.err(err).next();
       });
   });
 
