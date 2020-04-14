@@ -20,25 +20,25 @@ function makeUsersArray() {
       full_name: "John Smith",
       email: "johnsmith@gmail.com",
       password: "password",
-      company_name: "Thinkful",
       isadmin: true,
+      companyid: 1,
     },
     {
       id: 2,
       full_name: "Jane King",
       email: "janeking@gmail.com",
       password: "password",
-      company_name: "Demo",
       isadmin: false,
+      companyid: 2,
     },
     {
       id: 3,
       full_name: "Michael Johnson",
       email: "mj@gmail.com",
       password: "password",
-      company_name: "Reynolds",
       isadmin: true,
-    }
+      companyid: 2
+    },
   ];
 }
 
@@ -82,7 +82,7 @@ const makeProjectsArray = (companies) => {
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
   const token = jwt.sign({ user_id: user.id }, secret, {
-    subject: user.user_name,
+    subject: user.email,
     algorithm: "HS256",
   });
 
@@ -184,19 +184,19 @@ function cleanTables(db) {
       .raw(
         `TRUNCATE
           users,
-          companies,
+          company,
           projects,
-          tasks, 
+          tasks
         `
       )
       .then(() =>
         Promise.all([
           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`ALTER SEQUENCE companies_id_seq minvalue 0 START WITH 1`),
+          trx.raw(`ALTER SEQUENCE company_id_seq minvalue 0 START WITH 1`),
           trx.raw(`ALTER SEQUENCE projects_id_seq minvalue 0 START WITH 1`),
           trx.raw(`ALTER SEQUENCE tasks_id_seq minvalue 0 START WITH 1`),
           trx.raw(`SELECT setval('users_id_seq', 0)`),
-          trx.raw(`SELECT setval('companies_id_seq', 0)`),
+          trx.raw(`SELECT setval('company_id_seq', 0)`),
           trx.raw(`SELECT setval('projects_id_seq', 0)`),
           trx.raw(`SELECT setval('tasks_id_seq', 0)`),
         ])
@@ -216,6 +216,15 @@ function seedUsers(db, users) {
       // update the auto sequence to stay in sync
       db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
     );
+}
+
+function seedCompanies(db, companies) { 
+  return db 
+    .into("company")
+    .insert(companies)
+    .then(() => { 
+      db.raw(`SELECT setval('company_id_seq', ?)`, [companies[companies.length - 1].id]);
+    })
 }
 function seedProjectsTables(db, users, projects, tasks = []) {
   // use a transaction to group the queries and auto rollback on any failure
@@ -282,4 +291,5 @@ module.exports = {
   cleanTables,
   seedProjectsTables,
   seedUsers,
+  seedCompanies
 };
