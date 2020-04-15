@@ -7,7 +7,7 @@ const UsersService = {
   getEmployees(db, id) {
     return db
       .from("users")
-      .select("users.id", "users.full_name", "users.email")
+      .select("users.id", "users.full_name", "users.email", "users.isadmin")
       .where("users.companyid", id);
   },
   hasUserWithUserName(db, email) {
@@ -50,6 +50,9 @@ const UsersService = {
       isadmin: user.isadmin,
     };
   },
+  updateUser(db, id, newUserFields) {
+    return db("users").where({ id }).update(newUserFields);
+  }
 };
 
 module.exports = UsersService;
