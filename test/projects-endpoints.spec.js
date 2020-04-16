@@ -46,7 +46,7 @@ describe("Projects Endpoints", function () {
                 helpers.seedProjectsTables(db, testUsers, testProjects, testCompanies, testTasks)
             );
 
-            it("responds with 200 and all of the jobs for a company", () => {
+            it("responds with 200 and all of the projects for a company", () => {
                 const companyId = testCompanies[0].id;
                 const expectedProjects = testProjects.filter(project => project.companyid === companyId)
                 const expectedResponse = expectedProjects.map(project => helpers.makeExpectedProject(project))
@@ -93,4 +93,102 @@ describe("Projects Endpoints", function () {
 
         })
     });
+    describe("DELETE /api/projects/:project_id", () => {
+      
+      context("Given projects in the database", () => {
+        beforeEach("insert projects", () =>
+          helpers.seedProjectsTables(
+            db,
+            testUsers,
+            testProjects,
+            testCompanies,
+            testTasks
+          )
+        );
+        it(`deletes project from database`, () => {
+          const projectId = 2;
+          const expectedProjects = testProjects.map((project) =>
+            helpers.makeExpectedProject(project));
+          const projectsWithDelete = expectedProjects.filter((project) => project.id !== projectId);
+
+            return supertest(app)
+                .delete(`/api/projects/${projectId}`)
+                .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+                .expect(204)
+        });
+      });
+    });
+
+    describe(`GET /api/projects/:project_id`, () => {
+        context(`Given no projects`, () => {
+                beforeEach("insert companies", () =>
+                  helpers.seedCompanies(db, testCompanies)
+                );
+                beforeEach("insert users", () =>
+                  helpers.seedUsers(db, testUsers)
+                );
+            it(`responds with 404`, () => {
+                const projectId = 123456;
+                return supertest(app)
+                    .get(`/api/projects/${projectId}`)
+                    .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+                    .expect(404, { error: { message: `Project Not Found` } });
+            });
+        });
+
+        context("Given there are projects in the database", () => {
+         beforeEach("insert projects", () =>
+           helpers.seedProjectsTables(
+             db,
+             testUsers,
+             testProjects,
+             testCompanies,
+             testTasks
+           )
+         );
+            it("responds with 200 and the specified project", () => {
+                const projectId = 2;
+                const expectedProject = helpers.makeExpectedProject(testProjects[1]);
+
+                return supertest(app)
+                    .get(`/api/projects/${projectId}`)
+                    .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+                    .expect(200, expectedProject);
+            });
+        });
+
+    });
+    describe("PATCH /api/projects/:project_id", () => {
+      context("Given there are contacts for project in the database", () => {
+        beforeEach("insert projects", () =>
+          helpers.seedProjectsTables(db, testUsers, testProjects, testCompanies, testTasks)
+        );
+
+        it("responds with 201 and the updated project", () => {
+          const projectId = 1;
+          const projectValues = {
+            project_name: "Newly revised project",
+            description: "Everything should work just fine",
+            priority: "High",
+          };
+          const revisedproject = {
+            ...testProjects[projectId - 1],
+            ...projectValues,
+          };
+          const expectedProject = helpers.makeExpectedProject(revisedproject);
+          return supertest(app)
+            .patch(`/api/projects/${projectId}`)
+            .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+            .send(projectValues)
+            .expect(201)
+            .then((res) =>
+              supertest(app)
+                .get(`/api/projects/${projectId}`)
+                .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+                .expect(200, expectedProject)
+            );
+        });
+      });
+    });
+
 });
