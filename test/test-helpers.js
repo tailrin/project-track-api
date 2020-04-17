@@ -37,7 +37,15 @@ function makeUsersArray() {
       email: "mj@gmail.com",
       password: "password",
       isadmin: true,
-      companyid: 2
+      companyid: 2,
+    },
+    {
+      id: 4,
+      full_name: "Ben Shepard",
+      email: "bens@gmail.com",
+      password: "password",
+      isadmin: true,
+      companyid: 1,
     },
   ];
 }
@@ -61,7 +69,7 @@ const makeProjectsArray = (companies) => {
       description: "Get plasma from survivors of covid",
       dateadded: new Date("2029-03-30T16:28:32.615Z"),
       duedate: new Date("2029-04-22T16:28:32.615Z"),
-      dateclosed: null,
+      dateclosed: new Date("2029-06-12T16:28:32.615Z"),
       priority: "High",
       status: "In Progress",
       companyid: companies[1].id,
@@ -72,7 +80,7 @@ const makeProjectsArray = (companies) => {
       description: "Help route to areas which need supplies",
       dateadded: new Date("2029-04-12T16:28:32.615Z"),
       duedate: new Date("2029-05-22T16:28:32.615Z"),
-      dateclosed: null,
+      dateclosed: new Date("2029-05-30T16:28:32.615Z"),
       priority: "Urgent",
       status: "New",
       companyid: companies[1].id,
@@ -95,32 +103,32 @@ function makeTasksArray(projects, users) {
       id: 1,
       projectid: 1,
       task_name: "Create back-end route for adding messages",
-      assignedTo: 2,
+      assignedto: 2,
       description: "Make sure post request passing and write tests",
       priority: "High",
       status: "New",
       datecreated: new Date("2029-01-22T16:28:32.615Z"),
-      datemodified: null,
-      dateclosed: null,
+      datemodified: new Date("2029-01-26T16:28:32.615Z"),
+      dateclosed: new Date("2029-01-27T16:28:32.615Z"),
     },
     {
       id: 2,
       projectid: 2,
       task_name: "Create home page",
-      assignedTo: 1,
+      assignedto: 1,
       description:
         "Home page should display testing sites and link to signup form",
       priority: "High",
       status: "In Progress",
       datecreated: new Date("2029-01-22T16:28:32.615Z"),
       datemodified: new Date("2029-02-02T16:28:32.615Z"),
-      dateclosed: null,
+      dateclosed: new Date("2029-02-12T16:28:32.615Z"),
     },
     {
       id: 3,
       projectid: 3,
       task_name: "Write algorithm for best route",
-      assignedTo: 3,
+      assignedto: 3,
       description: "use dijkstra's shortest path algorithm",
       priority: "Urgent",
       status: "Closed",
@@ -145,12 +153,21 @@ function makeExpectedTask(task) {
     dateclosed: task.dateclosed.toISOString(),
   };
 }
+function makeExpectedUser(user) { 
+  return {
+    id: user.id,
+    full_name: user.full_name,
+    email: user.email,
+    isadmin: user.isadmin
+  };
+   
+}
 function makeExpectedProject(project) {
     return {
       id: project.id,
       project_name: project.project_name,
       description: project.description,
-      dateadded: project.dateadded,
+      dateadded: project.dateadded.toISOString(),
       duedate: project.duedate.toISOString(),
       dateclosed: project.dateclosed.toISOString(),
       priority: project.priority,
@@ -226,9 +243,10 @@ function seedCompanies(db, companies) {
       db.raw(`SELECT setval('company_id_seq', ?)`, [companies[companies.length - 1].id]);
     })
 }
-function seedProjectsTables(db, users, projects, tasks = []) {
+function seedProjectsTables(db, users, projects, companies, tasks) {
   // use a transaction to group the queries and auto rollback on any failure
   return db.transaction(async (trx) => {
+    await seedCompanies(trx, companies);
     await seedUsers(trx, users);
     await trx.into("projects").insert(projects);
 
@@ -236,7 +254,7 @@ function seedProjectsTables(db, users, projects, tasks = []) {
     await trx.raw(`SELECT setval('projects_id_seq', ?)`, [
       projects[projects.length - 1].id,
     ]);
-    // only insert contacts if there are some, also update the sequence counter
+    // only insert tasks if there are some, also update the sequence counter
     if (tasks.length) {
       await trx.into("tasks").insert(tasks);
       await trx.raw(`SELECT setval('tasks_id_seq', ?)`, [
@@ -284,6 +302,7 @@ module.exports = {
   makeExpectedProject,
   makeExpectedTask,
   makeExpectedCompany,
+  makeExpectedUser,
   makeAuthHeader,
   makeMaliciousProject,
   seedMaliciousProject,
