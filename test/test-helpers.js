@@ -37,7 +37,15 @@ function makeUsersArray() {
       email: "mj@gmail.com",
       password: "password",
       isadmin: true,
-      companyid: 2
+      companyid: 2,
+    },
+    {
+      id: 4,
+      full_name: "Ben Shepard",
+      email: "bens@gmail.com",
+      password: "password",
+      isadmin: true,
+      companyid: 1,
     },
   ];
 }
@@ -144,6 +152,15 @@ function makeExpectedTask(task) {
     datemodified: task.datemodified.toISOString(),
     dateclosed: task.dateclosed.toISOString(),
   };
+}
+function makeExpectedUser(user) { 
+  return {
+    id: user.id,
+    full_name: user.full_name,
+    email: user.email,
+    isadmin: user.isadmin
+  };
+   
 }
 function makeExpectedProject(project) {
     return {
@@ -285,6 +302,7 @@ module.exports = {
   makeExpectedProject,
   makeExpectedTask,
   makeExpectedCompany,
+  makeExpectedUser,
   makeAuthHeader,
   makeMaliciousProject,
   seedMaliciousProject,
