@@ -6,6 +6,7 @@ const CompanyService = require("../company/company-service");
 const AuthService = require("../auth/auth-service");
 const jsonBodyParser = express.json();
 const { requireAuth } = require("../middleware/jwt-auth");
+const logger = require("../middleware/logger.js");
 
 usersRouter
   .route("/c/:companyid")
@@ -25,8 +26,33 @@ usersRouter
       .catch(next);
   });
 
+usersRouter
+  .route("/:user_id")
+  .all(requireAuth)
+  .patch(jsonBodyParser, (req, res, next) => {
+    const {isadmin, email, full_name} = req.body;
+    const id = req.params.user_id
+    const updatedUser = {
+      id,
+      isadmin,
+      email,
+      full_name
+    }
+    UsersService.updateUser(req.app.get('db'), id, updatedUser)
+      .then(user => {
+        if (!user) {
+          logger.error(`Project with id ${id} not found.`);
+          return res.status(404).json({
+            error: { message: `User Not Found` },
+          });
+        }
+        res.status(201).location(`/:user_id`).end();
+      })
+  })
+
 usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   const { password, email, full_name, company_name, isadmin } = req.body;
+  console.log(req.body)
 
   for (const field of ["full_name", "email", "password", "company_name"])
     if (!req.body[field])
@@ -83,7 +109,6 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
                 .location(path.posix.join(req.originalUrl, `/${user.id}`))
                 .json({
                   authToken: AuthService.createJwt(sub, payload),
-                  user: UsersService.serializeUser(user),
                 });
             }
           );
