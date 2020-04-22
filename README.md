@@ -74,7 +74,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/auth/login', {
 
 ### Add or Get Projects Enpoint
 
-[https://bug-trapper-server.herokuapp.com/api/projects](https://bug-trapper-server.herokuapp.com/api/projects)
+[https://tranquil-mountain-91418.herokuapp.com/api/projects](https://tranquil-mountain-91418.herokuapp.com/api/projects)
 
 Example
 
@@ -90,7 +90,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/projects', {
 
 ### Add or Get Tasks Enpoint
 
-[https://bug-trapper-server.herokuapp.com/api/tasks](https://bug-trapper-server.herokuapp.com/api/tasks)
+[https://tranquil-mountain-91418.herokuapp.com/api/tasks](https://tranquil-mountain-91418.herokuapp.com/api/tasks)
 
 Example
 
@@ -106,7 +106,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/tasks', {
 
 ### Update Task Endpoint
 
-[https://bug-trapper-server.herokuapp.com/api/tasks/:id](https://bug-trapper-server.herokuapp.com/api/tasks/:id)
+['https://tranquil-mountain-91418.herokuapp.com/api/tasks/:id]('https://tranquil-mountain-91418.herokuappcom/api/tasks/:id)
 
 Example
 
@@ -130,7 +130,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/tasks/1', {
 
 ### Update Task Endpoint
 
-[https://bug-trapper-server.herokuapp.com/api/projects/:id](https://bug-trapper-server.herokuapp.com/api/projects/:id)
+['https://tranquil-mountain-91418.herokuapp.com/api/projects/:id]('https://tranquil-mountain-91418.herokuapp.com/api/projects/:id)
 
 Example
 
@@ -154,7 +154,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/projects/1', {
 
 ### Update Task Endpoint
 
-[https://bug-trapper-server.herokuapp.com/api/users/:id](https://bug-trapper-server.herokuapp.com/api/users/:id)
+['https://tranquil-mountain-91418.herokuapp.com/api/users/:id]('https://tranquil-mountain-91418.herokuapp.com/api/users/:id)
 
 Example
 
