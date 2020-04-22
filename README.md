@@ -128,7 +128,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/tasks/1', {
 })
 ```
 
-### Update Task Endpoint
+### Update Project Endpoint
 
 [https://tranquil-mountain-91418.herokuapp.com/api/projects/:id](https://tranquil-mountain-91418.herokuapp.com/api/projects/:id)
 
@@ -152,7 +152,7 @@ fetch('https://tranquil-mountain-91418.herokuapp.com/api/projects/1', {
 })
 ```
 
-### Update Task Endpoint
+### Update User Endpoint
 
 [https://tranquil-mountain-91418.herokuapp.com/api/users/:id](https://tranquil-mountain-91418.herokuapp.com/api/users/:id)
 
